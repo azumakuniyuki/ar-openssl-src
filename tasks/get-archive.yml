@@ -1,0 +1,20 @@
+---
+#                                 _  __          __     ___            _        
+#   ___  _ __   ___ _ __  ___ ___| |/ /__ _ __ __\ \   / / |_ __ _ ___| | _____ 
+#  / _ \| '_ \ / _ \ '_ \/ __/ __| | / __| '__/ __| | / /| __/ _` / __| |/ / __|
+# | (_) | |_) |  __/ | | \__ \__ \ | \__ \ | | (__| |/ / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|___/___/_| |___/_|  \___| /_/   \__\__,_|___/_|\_\___/
+#       |_|                         \_\          /_/                            
+# get-archive
+- name: get-archive | Download OpenSSL archive
+  get_url:
+    url:  "http://www.openssl.org/source/openssl-{{ openssl.version }}.tar.gz"
+    dest: "{{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz"
+
+- name: get-archive | Extract {{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz
+  unarchive:
+    src:     "{{ openssl.workingdir }}/openssl-{{ openssl.version }}.tar.gz"
+    dest:    "{{ openssl.workingdir }}"
+    creates: "{{ openssl.workingdir }}/openssl-{{ openssl.version }}"
+    copy:    "no"
+

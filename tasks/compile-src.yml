@@ -1,0 +1,35 @@
+---
+#                                 _  __          __     ___            _        
+#   ___  _ __   ___ _ __  ___ ___| |/ /__ _ __ __\ \   / / |_ __ _ ___| | _____ 
+#  / _ \| '_ \ / _ \ '_ \/ __/ __| | / __| '__/ __| | / /| __/ _` / __| |/ / __|
+# | (_) | |_) |  __/ | | \__ \__ \ | \__ \ | | (__| |/ / | || (_| \__ \   <\__ \
+#  \___/| .__/ \___|_| |_|___/___/_| |___/_|  \___| /_/   \__\__,_|___/_|\_\___/
+#       |_|                         \_\          /_/                            
+# compile-src
+- name: compile-src | REBUILD | make clean
+  when: openssl.rebuild == true
+  shell: make clean
+  args:
+    chdir:   "{{ openssl.workingdir }}/openssl-{{ openssl.version }}/"
+    removes: "./crypto/opensslconf.h.bak"
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be configured
+  shell: >
+    /bin/sh ./config --prefix={{ openssl.install }}
+  args:
+    creates: "./crypto/opensslconf.h.bak"
+    chdir:   "{{ openssl.workingdir }}/openssl-{{ openssl.version }}/"
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be made
+  register: make_openssl_binary
+  shell: make
+  args:
+    chdir:   "{{ openssl.workingdir }}/openssl-{{ openssl.version }}/"
+    creates: "libcrypto.a"
+
+- name: compile-src | OpenSSL {{ openssl.version }} should be installed
+  when: make_openssl_binary.changed
+  shell: make install
+  args:
+    chdir: "{{ openssl.workingdir }}/openssl-{{ openssl.version }}/"
+
