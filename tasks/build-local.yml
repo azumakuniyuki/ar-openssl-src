@@ -5,10 +5,12 @@
 # | (_) | |_) |  __/ | | \__ \__ \ | \__ \ | | (__| |/ / | || (_| \__ \   <\__ \
 #  \___/| .__/ \___|_| |_|___/___/_| |___/_|  \___| /_/   \__\__,_|___/_|\_\___/
 #       |_|                         \_\          /_/                            
-# tasks file for ar-openssl-src
-- include: install-pkg.yml
-- include: get-archive.yml
-- include: compile-src.yml
-- include: make-config.yml
-- include: build-local.yml
-
+# build-local
+- name: build-local | libcrypto and libssl should be linked from /usr/lib64
+  file:
+    src:   "{{ openssl.install }}/lib/{{ item }}"
+    dest:  "/usr/lib64/{{ item }}"
+    state: "link"
+  with_items:
+    - "libssl.so.1.1"
+    - "libcrypto.so.1.1"
